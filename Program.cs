@@ -11,7 +11,7 @@ var configuration = new ConfigurationBuilder()
   .Build();
 
 var agentConfig = configuration.Get<AgentConfig>()
-  ?? throw new InvalidOperationException("Invalid opration");
+  ?? throw new InvalidOperationException("Invalid configuration");
 
 var server = new MetricServer(port: agentConfig.Prometheus.Port);
 server.Start();

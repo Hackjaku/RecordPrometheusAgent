@@ -6,4 +6,8 @@ Il formato e' basato su [Keep a Changelog](http://keepachangelog.com) aderendo a
 
 ## [ALPHA1]
 ### Add
-
+- MySQL monitor
+- Ping monitor
+- Disk monitor
+- RAM monitor
+- Process monitor

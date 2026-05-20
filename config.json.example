@@ -1,7 +1,33 @@
 {
-    "monitoring": {
-        "ping_targets": [ "8.8.8.8" ],
-        "ping_interval_seconds": 60,
-        "disk_interval_seconds": 300
+  "prometheus": {
+    "port": 10090
+  },
+  "monitoring": {
+    "process": {
+      "enabled": true,
+      "interval_seconds": 10
+    },
+    "ram": {
+      "enabled": true,
+      "interval_seconds": 10
+    },
+    "disk": {
+      "enabled": true,
+      "interval_seconds": 300,
+      "drives": [ "C:\\", "D:\\" ]
+    },
+    "ping": {
+      "enabled": true,
+      "interval_seconds": 60,
+      "targets": [
+        { "name": "thomas_desktop", "host": "192.168.10.91" },
+        { "name": "thomas_server", "host": "192.168.10.94" }
+      ]
+    },
+    "mysql": {
+      "enabled": false,
+      "interval_seconds": 30,
+      "connection_string": ""
     }
+  }
 }

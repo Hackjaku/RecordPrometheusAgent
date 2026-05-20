@@ -1,5 +1,5 @@
 namespace PrometheusAgent.Services;
 
 public interface IMonitor {
-  void Start(CancellationToken cancellationToken);
+    void Start(CancellationToken cancellationToken);
 }

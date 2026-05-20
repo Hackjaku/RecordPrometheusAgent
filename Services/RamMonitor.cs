@@ -1,59 +1,85 @@
+using System.Runtime.InteropServices;
 using PrometheusAgent.Configuration;
+using PrometheusAgent.Helpers;
 using PrometheusAgent.Metrics;
 
 namespace PrometheusAgent.Services;
 
 public sealed class RamMonitor : IMonitor {
-  private readonly RamConfig _config;
+    private readonly RamConfig _config;
 
-  public RamMonitor(RamConfig config) {
-    _config = config;
-  }
-
-  public void Start(CancellationToken cancellationToken) {
-    _ = Task.Run(() => RunAsync(cancellationToken), cancellationToken);
-  }
-
-  private async Task RunAsync(CancellationToken cancellationToken) {
-    while (!cancellationToken.IsCancellationRequested) {
-      UpdateMetrics();
-
-      await Task.Delay(
-          TimeSpan.FromSeconds(_config.IntervalSeconds),
-          cancellationToken);
+    public RamMonitor(RamConfig config) {
+        _config = config;
     }
-  }
 
-  private static void UpdateMetrics() {
-    var memInfo = File.ReadAllLines("/proc/meminfo");
+    public void Start(CancellationToken cancellationToken) {
+        _ = Task.Run(() => RunAsync(cancellationToken), cancellationToken);
+    }
 
-    long totalKb = ReadMemInfoValue(memInfo, "MemTotal:");
-    long availableKb = ReadMemInfoValue(memInfo, "MemAvailable:");
+    private async Task RunAsync(CancellationToken cancellationToken) {
+        while (!cancellationToken.IsCancellationRequested) {
+            UpdateMetrics();
 
-    long totalBytes = totalKb * 1024;
-    long availableBytes = availableKb * 1024;
-    long usedBytes = totalBytes - availableBytes;
+            await Task.Delay(
+                TimeSpan.FromSeconds(_config.IntervalSeconds),
+                cancellationToken);
+        }
+    }
 
-    double usedPercent = totalBytes > 0
-        ? usedBytes * 100.0 / totalBytes
-        : 0;
+    private static void UpdateMetrics() {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+            UpdateWindowsMetrics();
+            return;
+        }
 
-    MetricDefinitions.SystemRamTotal.Set(totalBytes);
-    MetricDefinitions.SystemRamAvailable.Set(availableBytes);
-    MetricDefinitions.SystemRamUsed.Set(usedBytes);
-    MetricDefinitions.SystemRamUsedPercent.Set(usedPercent);
-  }
+        UpdateLinuxMetrics();
+    }
 
-  private static long ReadMemInfoValue(string[] lines, string key) {
-    var line = lines.FirstOrDefault(x => x.StartsWith(key));
+    private static void UpdateWindowsMetrics() {
+        var (totalBytes, availableBytes) = MemoryHelper.GetWindowsMemory();
 
-    if (line is null)
-      return 0;
+        var usedBytes = totalBytes - availableBytes;
 
-    var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var usedPercent = totalBytes > 0
+            ? usedBytes * 100.0 / totalBytes
+            : 0;
 
-    return long.TryParse(parts[1], out var value)
-        ? value
-        : 0;
-  }
+        MetricDefinitions.SystemRamTotal.Set((double)totalBytes);
+        MetricDefinitions.SystemRamAvailable.Set((double)availableBytes);
+        MetricDefinitions.SystemRamUsed.Set((double)usedBytes);
+        MetricDefinitions.SystemRamUsedPercent.Set(usedPercent);
+    }
+
+    private static void UpdateLinuxMetrics() {
+        var memInfo = File.ReadAllLines("/proc/meminfo");
+
+        long totalKb = ReadMemInfoValue(memInfo, "MemTotal:");
+        long availableKb = ReadMemInfoValue(memInfo, "MemAvailable:");
+
+        long totalBytes = totalKb * 1024;
+        long availableBytes = availableKb * 1024;
+        long usedBytes = totalBytes - availableBytes;
+
+        double usedPercent = totalBytes > 0
+            ? usedBytes * 100.0 / totalBytes
+            : 0;
+
+        MetricDefinitions.SystemRamTotal.Set(totalBytes);
+        MetricDefinitions.SystemRamAvailable.Set(availableBytes);
+        MetricDefinitions.SystemRamUsed.Set(usedBytes);
+        MetricDefinitions.SystemRamUsedPercent.Set(usedPercent);
+    }
+
+    private static long ReadMemInfoValue(string[] lines, string key) {
+        var line = lines.FirstOrDefault(x => x.StartsWith(key));
+
+        if (line is null)
+            return 0;
+
+        var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        return long.TryParse(parts[1], out var value)
+            ? value
+            : 0;
+    }
 }

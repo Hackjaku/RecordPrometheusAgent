@@ -8,3 +8,6 @@ csharp_new_line_before_open_brace_anonymous_methods = false
 csharp_new_line_before_open_brace_control_blocks = false
 csharp_new_line_before_open_brace_anonymous_types = false
 csharp_new_line_before_open_brace_object_collection_array_initializers = false
+indent_size = 4
+indent_style = space
+insert_final_newline = true

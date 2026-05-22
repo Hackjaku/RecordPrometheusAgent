@@ -15,7 +15,7 @@ public static class MetricDefinitions {
     public static readonly Gauge PingLatency = Prometheus.Metrics.CreateGauge(
         "ping_latency_ms",
         "Ping latency in milliseconds.",
-        new GaugeConfiguration { LabelNames = new[] { "name", "host" } });
+        new GaugeConfiguration { LabelNames = new[] { "name", "target" } });
 
     public static readonly Gauge DiskTotal = Prometheus.Metrics.CreateGauge(
         "disk_total_bytes",

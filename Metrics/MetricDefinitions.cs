@@ -33,8 +33,8 @@ public static class MetricDefinitions {
         new GaugeConfiguration { LabelNames = new[] { "drive" } });
 
     public static readonly Gauge SystemRamTotal = Prometheus.Metrics.CreateGauge(
-      "system_ram_total_bytes",
-      "Total system RAM in bytes.");
+        "system_ram_total_bytes",
+        "Total system RAM in bytes.");
 
     public static readonly Gauge SystemRamAvailable = Prometheus.Metrics.CreateGauge(
         "system_ram_available_bytes",

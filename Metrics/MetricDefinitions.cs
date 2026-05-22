@@ -10,7 +10,7 @@ public static class MetricDefinitions {
     public static readonly Gauge PingStatus = Prometheus.Metrics.CreateGauge(
         "ping_status",
         "Ping status. 1 = up, 0 = down.",
-        new GaugeConfiguration { LabelNames = new[] { "name", "host" } });
+        new GaugeConfiguration { LabelNames = new[] { "name", "target" } });
 
     public static readonly Gauge PingLatency = Prometheus.Metrics.CreateGauge(
         "ping_latency_ms",

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 
+using System.Runtime.InteropServices;
+
 using Prometheus;
 
 using PrometheusAgent.Services;
@@ -40,7 +42,13 @@ if (agentConfig.Monitoring.Mysql.Enabled) {
     monitors.Add(new MysqlMonitor(agentConfig.Monitoring.Mysql));
 }
 
-if (agentConfig.Monitoring.Cpu.Enabled) {
+if (
+    agentConfig.Monitoring.Cpu.Enabled &&
+    (
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ||
+        RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+    )
+) {
     monitors.Add(new CpuMonitor(agentConfig.Monitoring.Cpu));
 }
 

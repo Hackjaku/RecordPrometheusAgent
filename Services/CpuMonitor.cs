@@ -56,11 +56,16 @@ public sealed class CpuMonitor : IMonitor {
         if (_windowsCpuCounter is null)
             return;
 
+        try {
 #pragma warning disable CA1416 // Validate platform compatibility
-        var value = _windowsCpuCounter.NextValue();
+            var value = _windowsCpuCounter.NextValue();
 #pragma warning restore CA1416 // Validate platform compatibility
 
-        MetricDefinitions.SystemCpuUsagePercent.Set(value);
+            MetricDefinitions.SystemCpuUsagePercent.Set(value);
+        }
+        catch {
+            // Ignore transient counter failures.
+        }
     }
 
     private void UpdateLinuxMetrics() {

@@ -67,4 +67,8 @@ public static class MetricDefinitions {
     public static readonly Gauge MysqlUptimeSeconds = Prometheus.Metrics.CreateGauge(
         "mysql_uptime_seconds",
         "MySQL uptime in seconds.");
+
+    public static readonly Gauge SystemCpuUsagePercent = Prometheus.Metrics.CreateGauge(
+        "system_cpu_usage_percent",
+        "Total system CPU usage percentage.");
 }

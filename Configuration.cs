@@ -15,6 +15,7 @@ public sealed class MonitoringConfig {
     public RamConfig Ram { get; set; } = new();
     public MysqlConfig Mysql { get; set; } = new();
     public ProcessConfig Process { get; set; } = new();
+    public CpuConfig Cpu { get; set; } = new();
 }
 
 public sealed class PingConfig {
@@ -48,4 +49,9 @@ public sealed class MysqlConfig {
     public bool Enabled { get; set; } = false;
     public int IntervalSeconds { get; set; } = 30;
     public string ConnectionString { get; set; } = "";
+}
+
+public sealed class CpuConfig {
+    public bool Enabled { get; set; } = true;
+    public int IntervalSeconds { get; set; } = 5;
 }

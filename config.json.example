@@ -28,6 +28,10 @@
       "enabled": false,
       "interval_seconds": 30,
       "connection_string": ""
+    },
+    "cpu": {
+      "enabled": true,
+      "interval_seconds": 5
     }
   }
 }

@@ -40,6 +40,10 @@ if (agentConfig.Monitoring.Mysql.Enabled) {
     monitors.Add(new MysqlMonitor(agentConfig.Monitoring.Mysql));
 }
 
+if (agentConfig.Monitoring.Cpu.Enabled) {
+    monitors.Add(new CpuMonitor(agentConfig.Monitoring.Cpu));
+}
+
 foreach (var monitor in monitors) {
     monitor.Start(cts.Token);
 }
